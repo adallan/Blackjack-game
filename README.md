@@ -5,9 +5,18 @@ Please see: [game_logic.cpp](https://github.com/adallan/Blackjack-game/blob/main
 See [here](https://github.com/adallan/Blackjack-game/blob/main/game_logic_bindings.cpp) for the C++ Web Assembly bindings for JavaScript to use to run the game in a browser.
 
 ## Currently working on the following next steps:
-- Converting C++ logic to web assembly.       Done!
-- Web assembly testing.       Currently ongoing ...
-- After JavaScript and Html/browser intergration.    Currently Starting.
+- Web assembly testing
+- After JavaScript and Html/browser intergration.
 - Browser testing.
+
+## Development Process
+- Base game logic codes in Visual Studio Code in C++.
+- Code is refactored to be usable by Web Assembly, bindings created for classes and functions.
+- Code is transformed into a .js and .wasm files to be used by JavaScript by Emscripten terminal functions.
+- HTML UI and Javascript programmed utilzing the Module created by Web Assembly.
+
+## Testing Process
+- Base gameplay loop and logic testing and debugged in VsCode terminal in C++.
+- HTML and JavaScript tested in browser via a Node live server.
 
 Thanks for reading!
