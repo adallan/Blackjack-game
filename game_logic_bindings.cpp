@@ -278,38 +278,6 @@ public:
         hand.clear();
     }
 };
-enum class hand_results {PlayerWins, DealerWins, Tie, None};
-
-hand_results check_winner(Player& player, Dealer& dealer)
-{
-    int player_total = player.get_hand_value();
-    int dealer_total = dealer.get_hand_value();
-
-    if (player_total > 21 && dealer_total > 21)
-    {
-        return hand_results::Tie;
-    }
-    if (player_total > 21 )
-    {
-        return hand_results::DealerWins;
-    }
-    if (dealer_total > 21)
-    {
-        return hand_results::PlayerWins;
-    }
-    if (player_total > dealer_total)
-    {
-        return hand_results::PlayerWins;
-    }
-    if (player_total < dealer_total)
-    {
-        return hand_results::DealerWins;
-    }
-    else
-    {
-        return hand_results::Tie;
-    }
-}
 //Non-class specific Functions
 bool bust_check_player(Player& player)
 {
@@ -379,24 +347,20 @@ EMSCRIPTEN_BINDINGS(blackjack_module)
         .function("get_hand_string", &Player::get_hand_string)
         .function("place_bet", &Player::place_bet)
         .function("add_chips", &Player::add_chips)
-        .function("show_chips", &Player::show_chips);
+        .function("show_chips", &Player::show_chips)
+        .function("clear_hand", &Player::clear_hand);
 
 //Dealer bindings
     class_<Dealer>("Dealer")
         .constructor<>()
         .function("add_card", &Dealer::add_card)
         .function("get_hand_value", &Dealer::get_hand_value)
-        .function("get_hand_string", &Dealer::get_hand_string);
+        .function("get_hand_string", &Dealer::get_hand_string)
+        .function("clear_hand", &Dealer::clear_hand);
 
 //Game functions
     function("starting_hands", &starting_hands);
     function("hit_card", &hit_card);
     function("bust_check_player", &bust_check_player);
     function("bust_check_dealer", &bust_check_dealer);
-
-enum_<hand_results>("hand_results")
-        .value("PlayerWins", hand_results::PlayerWins)
-        .value("DealerWins", hand_results::DealerWins)
-        .value("Tie", hand_results::Tie)
-        .value("None", hand_results::None);
 }
