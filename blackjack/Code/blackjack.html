@@ -89,10 +89,12 @@
             let dealer_second_card;
             let player_hand_value = 0;
             let dealer_hand_value = 0;
+            const card_cache = {};
 
             Module().then((Module) => 
             {
                 Module_Ref = Module;
+                preload_cards();
                 
                 // Create objects
                 deck = new Module.Deck();
@@ -103,7 +105,24 @@
 
                 update_ui();    
             });
-
+            function preload_cards(){
+                const suits = ["Hearts","Diamonds","Clubs","Spades"];
+                const ranks = ["Ace","2","3","4","5","6","7","8","9","10","Jack","Queen","King"];
+                
+                suits.forEach(suit => {
+                    ranks.forEach(rank => {
+                        const cardName = rank + " of " + suit;
+                        const img = new Image();
+                        img.src = "Blackjack-assets/card-assets/" + cardName + ".svg.png";
+                        cardCache[cardName] = img;
+                    });
+                });
+            
+                // Preload card back
+                const back = new Image();
+                back.src = "Blackjack-assets/card-assets/Card_back.svg.png";
+                cardCache["Card_back"] = back;
+            }
             function update_ui()
             {
                 player_hand = player.get_hand_string();
@@ -262,17 +281,13 @@
                 document.getElementById("bet_button").style.display = "inline-block";
                 document.getElementById("new_game").style.display = "none";
             }
-            function get_card_asset_path(card_string){
-                return "Blackjack-assets/card-assets/" + card_string + ".svg.png";
-            }
             function display_player_cards(){
                 const container = document.getElementById("player_hand_container");
                 container.innerHTML = ""
                 const player_hand = player.get_hand_string().trim().split("\n");
                 
                 player_hand.forEach(card_string => {
-                    const img = document.createElement("img");
-                    img.src = get_card_asset_path(card_string);
+                    const img = card_cache[card_string].cloneNode();
                     img.className = "card_img";
                     container.appendChild(img);
                 });
@@ -283,9 +298,8 @@
                 const dealer_hand = dealer.get_hand_string().trim().split("\n").filter(s => s);
                 
                 dealer_hand.forEach(card_string => {
-                    const img = document.createElement("img");
+                    const img = card_cache[card_string].cloneNode();
                     img.className = "card_img";
-                    img.src = get_card_asset_path(card_string);
                     container.appendChild(img);
                 });
             }
@@ -298,15 +312,13 @@
                 if (dealer_reveal === false) {
                     //Show first card
                     if (dealer_hand.length >= 1) {
-                        const first_card_img = document.createElement("img");
-                        first_card_img.src = get_card_asset_path(dealer_hand[0]);
+                        const first_card_img = card_cache[dealer_hand[0]].cloneNode();
                         first_card_img.className = "card_img";
                         dealer_hand_container.appendChild(first_card_img);
                     }
                     //Hidden second card
                     if (dealer_hand.length >= 2) {
-                        const second_card_img = document.createElement("img");
-                        second_card_img.src = "Blackjack-assets/card-assets/Card_back.svg.png";
+                        const second_card_img = card_cache["Card_back"].cloneNode();
                         second_card_img.className = "card_img";
                         dealer_hand_container.appendChild(second_card_img);
                     }
