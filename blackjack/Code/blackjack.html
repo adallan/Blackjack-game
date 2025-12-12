@@ -34,6 +34,8 @@
                 display: flex;
                 min-height: 100vh;
                 width: 100%;
+                padding: 2vh 2vw;
+                box-sizing: border-box;
             }
             .chip_ui{
                 position: absolute;
@@ -78,6 +80,22 @@
             @keyframes shine {
                 0% { background-position: 200%; }
                 100% { background-position: -200%; }
+            }
+            @media (max-width: 700px;){
+                .card_img{
+                    width: calc(15vh * 0.7);
+                    height: 15vh;
+                    background-size: cover;
+                    object-fit: contain;
+                }
+                .chip_ui{
+                    top: auto;
+                    bottom: 10vh;
+                    right: 5vw;
+                    flex-direction: row;
+                    gap: 1vh;
+                    transform: none;
+                }
             }
         </style>
         <script src="blackjack.js"></script>
