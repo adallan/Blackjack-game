@@ -81,20 +81,26 @@
                 0% { background-position: 200%; }
                 100% { background-position: -200%; }
             }
-            @media (max-width: 700px;){
+            @media (max-width: 500px;){
                 .card_img{
-                    width: calc(15vh * 0.7);
-                    height: 15vh;
+                    width: calc(12vh * 0.7);
+                    height: 12vh;
                     background-size: cover;
                     object-fit: contain;
                 }
                 .chip_ui{
                     top: auto;
-                    bottom: 10vh;
-                    right: 5vw;
+                    bottom: 5vh;
+                    right: 3vw;
                     flex-direction: row;
                     gap: 1vh;
                     transform: none;
+                }
+                 #player_hand_container {
+                    display: flex;
+                    overflow-x: auto;
+                    gap: 0.5vh;
+                    padding-bottom: 7vh;
                 }
             }
         </style>
