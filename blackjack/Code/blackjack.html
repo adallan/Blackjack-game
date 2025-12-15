@@ -69,6 +69,10 @@
                 color: transparent;
                 animation: shine 3s linear infinite;
             }
+            #player_hand_value {
+                margin-top: 1vh;
+                text-align: center;
+            }
             .lose_text {
                 font-weight: bold;
                 background: linear-gradient(90deg, rgb(227, 164, 164), rgb(2, 2, 2), rgb(113, 108, 108));
@@ -97,7 +101,7 @@
                     gap: 1vh;
                     transform: none;
                     position: relative;
-                    padding-bottom: 1vh;
+                    padding: 2vh 2vh;
                     overflow-x: auto;
                 }
                  #player_hand_container {
@@ -106,6 +110,12 @@
                     overflow-x: auto;
                     gap: 0.5vh;
                     padding-bottom: 7vh;
+                }
+                .chip_stack{
+                width: 7vh;
+                height: 7vh;
+                background-size: cover;
+                object-fit: contain;
                 }
             }
         </style>
