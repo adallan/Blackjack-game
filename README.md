@@ -18,8 +18,7 @@ See [here](https://github.com/adallan/Blackjack-game/blob/main/game_logic_bindin
 - Database construction and schema
 
 ## Arcitecture overview
-UI in Html/Css/JavaScript <-----> Backend C++ gane logic and Node.js
-Backend C++ <------> Database in Postgres
+UI in Html/Css/JavaScript <-----> Backend C++ game logic and Node.js <------> Database in Postgres
 
 - UI handles game visuals, interactions and betting.
 - Backend handels game logic and in the future registration, save/load and leaderboards.
