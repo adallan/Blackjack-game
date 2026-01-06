@@ -1,7 +1,7 @@
 # Blackjack-game
 A blackjack game made using C++ and hosted in browser via web assembly and JavaScript.
 
-Please see: [game_logic.cpp](https://github.com/adallan/Blackjack-game/blob/main/game_logic.cpp) for the C++ text based-game code!
+Please see: [game_logic.cpp](https://github.com/adallan/Blackjack-game/blob/main/game_logic_text_based.cpp) for the C++ text based-game code!
 See [here](https://github.com/adallan/Blackjack-game/blob/main/game_logic_bindings.cpp) for the C++ Web Assembly bindings for JavaScript to use to run the game in a browser.
 
 ## Development Process
@@ -16,6 +16,13 @@ See [here](https://github.com/adallan/Blackjack-game/blob/main/game_logic_bindin
 ## Testing Process
 - Base gameplay loop and logic testing and debugged in VsCode terminal in C++.
 - HTML and JavaScript tested in browser via a Node live server.
-- NEXT testing: Landing page and game testing hosted in github pages.
+- Landing page and game testing hosted in github pages for mobile and desktop debug.
+
+## Next Steps and future updates
+- Creation of user logins.
+- Creation of highscore leaderboards.
+- Implementation and creation of a database to host user data and score datas.
+- Docker pipeline.
+- Possible kerbernetes implementation.
 
 Thanks for reading!
