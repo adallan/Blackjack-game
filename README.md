@@ -1,5 +1,6 @@
 # Blackjack-game
 A blackjack game made using C++ and hosted in browser via web assembly and JavaScript.
+[Play the game now](https://adallan.github.io/Blackjack-game/)
 
 Please see: [game_logic.cpp](https://github.com/adallan/Blackjack-game/blob/main/game_logic_text_based.cpp) for the C++ text based-game code!
 See [here](https://github.com/adallan/Blackjack-game/blob/main/game_logic_bindings.cpp) for the C++ Web Assembly bindings for JavaScript to use to run the game in a browser.
