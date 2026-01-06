@@ -14,11 +14,23 @@ See [here](https://github.com/adallan/Blackjack-game/blob/main/game_logic_bindin
 - Game assets added into UI design.
 - CSS implemented for UI design and styling.
 - Development of game's landing page.
+- Data flow and architecture.
+- Database construction and schema
+
+## Arcitecture overview
+UI in Html/Css/JavaScript <-----> Backend C++ gane logic and Node.js
+Backend C++ <------> Database in Postgres
+
+- UI handles game visuals, interactions and betting.
+- Backend handels game logic and in the future registration, save/load and leaderboards.
+- Database will store users,game states and leaderboard information.
 
 ## Testing Process
 - Base gameplay loop and logic testing and debugged in VsCode terminal in C++.
 - HTML and JavaScript tested in browser via a Node live server.
 - Landing page and game testing hosted in github pages for mobile and desktop debug.
+- Database schema and funcationality testing in Postgres.
+- Live game testing to troubleshot user profiles and leaderboards.
 
 ## Next Steps and future updates
 - Creation of user logins.
