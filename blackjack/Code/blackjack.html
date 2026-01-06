@@ -152,7 +152,12 @@
                 dealer_hand_value = dealer.get_hand_value();
 
                 document.getElementById("player_hand").innerText = player_hand;
-                document.getElementById("player_chips").innerText = "Player Chip Total: " + player_chips;
+                if (window.innerWidth <= 500){
+                    document.getElementById("player_chips").innerText = "Chips: " + player_chips;
+                }
+                else{
+                    document.getElementById("player_chips").innerText = "Player Chip Total: " + player_chips;
+                }
                 document.getElementById("dealer_hand").innerText = dealer_hand;
                 if (player.get_hand_value() > 21){
                     document.getElementById("player_hand_value").innerText = "You bust!: " + player_hand_value;
