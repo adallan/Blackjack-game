@@ -93,18 +93,14 @@
                     object-fit: contain;
                 }
                 .chip_ui{
-                    top: auto;
-                    margin-top: 2vh;
-                    bottom: 2vh;
-                    right: 2vw;
-                    flex-direction: row;
-                    gap: 1vh;
-                    transform: none;
-                    position: fixed;
-                    padding: 1vh 1vh;
-                    overflow-x: auto;
-                    z-index: 10;
                     display: flex;
+                    position: fixed;
+                    justify-content: center;
+                    bottom: 2vh;
+                    padding: 1vh;
+                    gap: 1vh;
+                    z-index: 10;
+                    overflow-x: auto;
                 }
                  #player_hand_container {
                     display: flex;
@@ -117,13 +113,15 @@
                     margin-top: 1vh;
                     text-align: center;
                     padding: 0.5vh 0;
-                    margin-bottom: 4vh;
                 }
                 .chip_stack{
                 width: 5vh;
                 height: 5vh;
                 background-size: cover;
                 object-fit: contain;
+                }
+                .game_ui{
+                    padding-bottom: 10vh;
                 }
             }
         </style>
