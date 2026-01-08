@@ -15,14 +15,37 @@ See [here](https://github.com/adallan/Blackjack-game/blob/main/game_logic_bindin
 - CSS implemented for UI design and styling.
 - Development of game's landing page.
 - Data flow and architecture.
-- Database construction and schema
+- Database construction and schema.
+- Backend API in Node to bridge between the game and database.
 
-## Arcitecture overview
-UI in Html/Css/JavaScript <-----> Backend C++ game logic and Node.js <------> Database in Postgres
+## Full Stack Layer Overview
+# Layer 1 - Presentation Layer
+- User Interface in HTML/CSS/JavaScript hosted on github pages.
 
-- UI handles game visuals, interactions and betting.
-- Backend handels game logic and in the future registration, save/load and leaderboards.
-- Database will store users,game states and leaderboard information.
+# Layer 2 - Client Communication Layer
+- Browser networking via JavaScript using fetch to make rest API calls.
+
+# Layer 3 - Application Layer
+- Backend API logic in Node.js hosted on Render.
+- Authenticates users, logins, updates database.
+  
+# Layer 4 - Business Logic Layer
+- Game rules and game logic, lives in both frontend and backend determining busts, wins and losses.
+
+# Layer 5 - Data Layer
+- Dockerized Postgres database, stores users, their stats and the leaderboard data.
+
+# Layer 6 - Infrastructure Layer
+- Docker and Hosting on Render and Github pages.
+
+## Example of end to end flow
+-> Player Clicks "Stand".
+-> Frontend JavaScript calculates the result.
+-> fetch("/save-progress").
+-> Backend validates.
+-> Postgres updates the user stats.
+-> Leaderbaord is refreshed.
+-> Frontend fetches new leaderboard.
 
 ## Testing Process
 - Base gameplay loop and logic testing and debugged in VsCode terminal in C++.
@@ -34,7 +57,6 @@ UI in Html/Css/JavaScript <-----> Backend C++ game logic and Node.js <------> Da
 ## Next Steps and future updates
 - Creation of user logins.
 - Creation of highscore leaderboards.
-- Implementation and creation of a database to host user data and score datas.
 - Docker pipeline.
 - Possible kerbernetes implementation.
 
