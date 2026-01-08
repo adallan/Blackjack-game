@@ -19,23 +19,23 @@ See [here](https://github.com/adallan/Blackjack-game/blob/main/game_logic_bindin
 - Backend API in Node to bridge between the game and database.
 
 ## Full Stack Layer Overview
-# Layer 1 - Presentation Layer
+### Layer 1 - Presentation Layer
 - User Interface in HTML/CSS/JavaScript hosted on github pages.
 
-# Layer 2 - Client Communication Layer
+### Layer 2 - Client Communication Layer
 - Browser networking via JavaScript using fetch to make rest API calls.
 
-# Layer 3 - Application Layer
+### Layer 3 - Application Layer
 - Backend API logic in Node.js hosted on Render.
 - Authenticates users, logins, updates database.
   
-# Layer 4 - Business Logic Layer
+### Layer 4 - Business Logic Layer
 - Game rules and game logic, lives in both frontend and backend determining busts, wins and losses.
 
-# Layer 5 - Data Layer
+### Layer 5 - Data Layer
 - Dockerized Postgres database, stores users, their stats and the leaderboard data.
 
-# Layer 6 - Infrastructure Layer
+### Layer 6 - Infrastructure Layer
 - Docker and Hosting on Render and Github pages.
 
 ## Example of end to end flow
