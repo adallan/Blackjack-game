@@ -35,5 +35,5 @@ form.addEventListener('submit',async (e) => {
     }
 });
 function return_landing(){
-    window.location.href = "./blackjack_landing.html";
+    window.location.href = "./Blackjack_landing.html";
 }
