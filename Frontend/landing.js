@@ -2,10 +2,10 @@ function game_page(){
     window.location.href = "./blackjack.html";
 }
 function register_page(){
-    window.location.href = "./blackjack-register.html";
+    window.location.href = "./Blackjack-register.html";
 }
 function leaderboard_page(){
-    window.location.href = "./blackjack_leaderboard.html";
+    window.location.href = "./Blackjack_leaderboard.html";
 }
 function login_show(){
     document.getElementById("login_form").style.display = "flex";
