@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Blackjack User Registeration</title>
+        <style>
+            .message{margin-top: 1rem; color: red;}
+            body{
+                background-image:url(Blackjack-assets/casino-table_background.png);
+                background-size:cover;
+                background-position:center;
+                height: 100vh;
+                width: 100vw;
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+                background-repeat: no-repeat;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                display: flex;
+                min-height: 100vh;
+                width: 100%;
+                font-family: 'Playfair Display', serif;
+                color: white;
+                font-size: 2vh;
+            }
+            .submit_button {
+                padding: 1.2vh 3vh;
+                font-size: 2.5vh;
+                background: #0f0f0f;
+                border: 0.3vh solid gold;
+                border-radius: 1vh;
+                color: gold;
+                font-weight: bold;
+                cursor: pointer;
+                transition: 0.2s ease;
+            }
+            .submit_button:hover {
+                transform: scale(1.1);
+                box-shadow: 0 0 2vh gold;
+            }
+            h1 {
+                background: linear-gradient(90deg, gold, white, gold);
+                background-size: 200%;
+                -webkit-background-clip: text;
+                color: transparent;
+                animation: shine 3s linear infinite;
+            }
+            @keyframes shine {
+                0% { background-position: 200%; }
+                100% { background-position: -200%; }
+            }
+            input {
+                padding: 1.2vh 3vh;
+                font-size: 2.5vh;
+                background: #0f0f0f;
+                border: 0.3vh solid gold;
+                border-radius: 1vh;
+                color: white;
+            }
+        </style>
+    </head>
+    <body>
+        <h1> Create an Account</h1>
+        <button id="back_button" class="submit_button" onclick="return_landing()"> Back </button>
+        <form id="sign_up_form">
+            <input type="text" id="username" placeholder="Enter Username Here" required>
+            <br>
+            <input type="text" id="email_text" placeholder="Enter Email Here" required>
+            <br>
+            <input type="password" id="password" placeholder="Enter a Password" required>
+            <br><br>
+            <button type="submit" id="submit_form_button" class="submit_button">
+                Register Account
+            </button>
+            <div class="message" id="message_text"></div>
+        </form>
+        <script src="register.js"> </script>
+    </body>
+</html>

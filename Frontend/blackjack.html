@@ -1,0 +1,589 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title> Blackjack Game </title>
+        <style>
+            .card_img{
+                width: calc(20vh * 0.7);
+                height: 20vh;
+                background-size: cover;
+                object-fit: contain;
+            }
+            .chip_stack{
+                width: 10vh;
+                height: 10vh;
+                background-size: cover;
+                object-fit: contain;
+            }
+            .background_image{
+                background-image:url(Blackjack-assets/casino-table_background.png);
+                background-size:cover;
+                background-position:center;
+                height: 100vh;
+                width: 100vw;
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+                background-repeat: no-repeat;
+            }
+            .game_ui{
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                display: flex;
+                min-height: 100vh;
+                width: 100%;
+                padding: 2vh 2vw;
+                box-sizing: border-box;
+            }
+            .chip_ui{
+                position: absolute;
+                top: 75%;
+                right: 10vw;
+                display: flex;
+                flex-direction: column;
+                gap: 1vh;
+                transform: translateY(-50%);
+            }
+            p{ 
+                font-family: 'Playfair Display', serif;
+                color: white;
+                font-size: 2vh;
+            }
+            .button{
+                font-family: 'Inter', sans-serif;
+                font-weight: bold;
+                font-size: 2vh;
+            }
+            .button:hover {
+                transform: scale(1.1);
+                box-shadow: 0 0 2vh gold;
+                cursor: pointer;
+            }
+            .gold_text {
+                font-weight: bold;
+                background: linear-gradient(90deg, gold, white, gold);
+                background-size: 200%;
+                -webkit-background-clip: text;
+                color: transparent;
+                animation: shine 3s linear infinite;
+            }
+            #player_hand_value {
+                margin-top: 1vh;
+                text-align: center;
+            }
+            .lose_text {
+                font-weight: bold;
+                background: linear-gradient(90deg, rgb(227, 164, 164), rgb(2, 2, 2), rgb(113, 108, 108));
+                background-size: 200%;
+                -webkit-background-clip: text;
+                color: transparent;
+                animation: shine 3s linear infinite;
+            }
+            @keyframes shine {
+                0% { background-position: 200%; }
+                100% { background-position: -200%; }
+            }
+            @media (max-width: 500px){
+                .card_img{
+                    width: calc(12vh * 0.7);
+                    height: 12vh;
+                    background-size: cover;
+                    object-fit: contain;
+                }
+                 #player_hand_container {
+                    display: flex;
+                    flex-wrap: nowrap;
+                    overflow-x: auto;
+                    gap: 0.5vh;
+                    padding-bottom: 1vh;
+                }
+                 #player_hand_value {
+                    margin-top: 1vh;
+                    text-align: center;
+                    padding: 0.5vh 0;
+                    margin-bottom: 5vh;
+                }
+                .chip_stack{
+                    width: 5vh;
+                    height: 5vh;
+                    background-size: cover;
+                    object-fit: contain;
+                }
+                .chip_ui{
+                    right: 5vw;
+                }
+            }
+        </style>
+        <script src="blackjack.js"></script>
+        <script>
+            let Module_Ref;
+            let prize_chips = 0;
+            let dealer_reveal = false;
+            let deck, player, dealer;
+            let dealer_second_card;
+            let player_hand_value = 0;
+            let dealer_hand_value = 0;
+
+            Module().then(async (Module) => 
+            {
+                Module_Ref = Module;
+
+                // Create objects
+                deck = new Module.Deck();
+                player = new Module.Player(120);
+                dealer = new Module.Dealer();
+
+                await load_player_stats(player);
+
+                Module.starting_hands(player, deck, dealer)
+                update_ui();
+                });
+
+            function update_ui()
+            {
+                player_hand = player.get_hand_string();
+                player_hand_value = player.get_hand_value();
+                dealer_hand = dealer.get_hand_string();
+                dealer_hand_value = dealer.get_hand_value();
+
+                document.getElementById("player_hand").innerText = player_hand;
+                if (window.innerWidth <= 500){
+                    document.getElementById("player_chips").innerText = "Chips: " + player.show_chips();
+                }
+                else{
+                    document.getElementById("player_chips").innerText = "Player Chip Total: " + player.show_chips();
+                }
+                document.getElementById("dealer_hand").innerText = dealer_hand;
+                if (player.get_hand_value() > 21){
+                    document.getElementById("player_hand_value").innerText = "You bust!: " + player_hand_value;
+                    document.getElementById("dealer_hand").innerText = dealer_hand;
+                    document.getElementById("dealer_hand_value").innerText = "Dealer Hand Total: " + dealer_hand_value;
+                    return;
+                }
+                else{
+                   document.getElementById("player_hand_value").innerText = "Player Hand Total: " + player_hand_value;
+                }
+                if (dealer.get_hand_value() > 21){
+                    document.getElementById("dealer_hand").innerText = dealer_hand;
+                    document.getElementById("dealer_hand_value").innerText = "Dealer Busts: " + dealer_hand_value;
+                    return;
+                }
+                else if (dealer_reveal == true){
+                    document.getElementById("dealer_hand").innerText = dealer_hand;
+                    document.getElementById("dealer_hand_value").innerText = "Dealer Hand Total: " + dealer_hand_value;
+                }
+                else{
+                    document.getElementById("dealer_hand_value").innerText = "Dealer Hand Total: ?" 
+                }
+                display_player_cards();
+                dealer_hidden_card();
+                update_player_chips(player.show_chips());
+                update_prize_pool(prize_chips);
+            }
+            function hit_card()
+            {
+                player.add_card(deck.deal_card())
+                check_if_bust();
+            }
+            function check_if_bust()
+            {
+                if (Module_Ref.bust_check_player(player) == true){
+                    player_hand_value = 0;
+                    document.getElementById("hit_button").style.display = "none";
+                    document.getElementById("stay_button").style.display = "none";
+                    document.getElementById("new_game").style.display = "inline-block";
+                    prize_chips = 0;
+                    game_results();
+                }
+                else{
+                    update_ui();
+                }
+            }
+            function dealer_turn(){
+                let saftey = 0
+                dealer_reveal = true;
+                document.getElementById("hit_button").style.display = "none";
+                while (dealer.get_hand_value() < 17){
+                    dealer.add_card(deck.deal_card());
+                    saftey++;
+                    
+                    if (saftey > 15){
+                        console.error("Infinite loop break")
+                        break;
+                    }
+                }
+                update_ui();
+                game_results();
+            }
+            function bet_question(){
+                clear_styled_text()
+                document.getElementById("prize_pool").innerText = "How many chips do you want to bet?"
+                document.getElementById("bet_amount").style.display = "inline-block"
+                document.getElementById("submit_bet").style.display = "inline-block";
+            }
+            function clear_styled_text(){
+                const result = document.getElementById("prize_pool");
+                result.classList.remove("gold_text", "lose_text");
+            }
+            function bet_chips(){
+                const value = Number(document.getElementById("bet_amount").value);
+                const result = player.place_bet(value);
+
+                if (result == 0)
+                {
+                    document.getElementById("prize_pool").innerText = 
+                    "You don't have enough chips. Please enter a valid amount";
+                    return;
+                }
+                else{
+                    prize_chips = value*2
+                    document.getElementById("prize_pool").innerText = "Current Prize pool: " + prize_chips;
+                }
+                update_ui();
+                update_prize_pool(prize_chips);
+                document.getElementById("bet_amount").style.display = "none"
+                document.getElementById("submit_bet").style.display = "none"
+                document.getElementById("bet_button").style.display = "none"
+                document.getElementById("stay_button").style.display = "inline-block"
+                document.getElementById("hit_button").style.display = "inline-block";
+
+            }
+            function game_results(){
+                document.getElementById("stay_button").style.display = "none"
+                let round_won = false;
+                dealer_reveal = true;
+                display_dealer_cards();
+                display_player_cards();
+                if (player_hand_value > 21)
+                {
+                    document.getElementById("prize_pool").innerText = "You Bust, Dealer Wins"
+                    document.getElementById("prize_pool").className = "lose_text";
+                    round_won = false;
+                }
+                else if (dealer_hand_value > 21)
+                {
+                    document.getElementById("prize_pool").innerText = "Dealer Busts, You Win!"
+                    document.getElementById("prize_pool").className = "gold_text"
+                    round_won = true;
+                    player.add_chips(prize_chips);
+                    dealer_hidden_card();
+                }
+                else if (player_hand_value > dealer_hand_value)
+                {
+                    document.getElementById("prize_pool").innerText = "You Win!"
+                    document.getElementById("prize_pool").className = "gold_text"
+                    round_won = true;
+                    player.add_chips(prize_chips);
+                }
+                else if (player_hand_value < dealer_hand_value)
+                {
+                    document.getElementById("prize_pool").innerText = "Dealer Wins"
+                    document.getElementById("prize_pool").className = "lose_text";
+                    round_won = false;
+                }
+                else if (player_hand_value == dealer_hand_value)
+                {
+                    document.getElementById("prize_pool").innerText = "You Tie"
+                    round_won = false;
+                    player.add_chips(prize_chips/2);
+                }
+                prize_chips = 0;
+                end_round(round_won);
+                update_ui();
+                document.getElementById("new_game").style.display = "inline-block"
+            }
+            function start_new_round()
+            {
+                player.clear_hand();
+                dealer.clear_hand();
+                deck.new_deck();
+                deck.shuffle();
+                Module_Ref.starting_hands(player, deck, dealer);
+                dealer_reveal = false;
+                document.getElementById("prize_pool").innerText = ""
+                if (player.show_chips() == 0){
+                    player.add_chips(50);
+                }
+                update_ui();
+                document.getElementById("bet_button").style.display = "inline-block";
+                document.getElementById("new_game").style.display = "none";
+            }
+            function get_card_asset_path(card_string){
+                return "Blackjack-assets/card-assets/" + card_string + ".svg.png";
+            }
+            function display_player_cards(){
+                const container = document.getElementById("player_hand_container");
+                container.innerHTML = ""
+                const player_hand = player.get_hand_string().trim().split("\n");
+                
+                player_hand.forEach(card_string => {
+                    const img = document.createElement("img");
+                    img.src = get_card_asset_path(card_string);
+                    img.className = "card_img";
+                    container.appendChild(img);
+                });
+            }
+            function display_dealer_cards(){
+                const container = document.getElementById("dealer_hand_container");
+                container.innerHTML = ""
+                const dealer_hand = dealer.get_hand_string().trim().split("\n").filter(s => s);
+                
+                dealer_hand.forEach(card_string => {
+                    const img = document.createElement("img");
+                    img.className = "card_img";
+                    img.src = get_card_asset_path(card_string);
+                    container.appendChild(img);
+                });
+            }
+            function dealer_hidden_card() {
+                const dealer_hand_container = document.getElementById("dealer_hand_container");
+                const dealer_hand_text = document.getElementById("dealer_hand");
+                const dealer_hand = dealer.get_hand_string().trim().split("\n").filter(s => s.length > 0);
+                dealer_hand_container.innerHTML = ""; 
+
+                if (dealer_reveal === false) {
+                    //Show first card
+                    if (dealer_hand.length >= 1) {
+                        const first_card_img = document.createElement("img");
+                        first_card_img.src = get_card_asset_path(dealer_hand[0]);
+                        first_card_img.className = "card_img";
+                        dealer_hand_container.appendChild(first_card_img);
+                    }
+                    //Hidden second card
+                    if (dealer_hand.length >= 2) {
+                        const second_card_img = document.createElement("img");
+                        second_card_img.src = "Blackjack-assets/card-assets/Card_back.svg.png";
+                        second_card_img.className = "card_img";
+                        dealer_hand_container.appendChild(second_card_img);
+                    }
+                    //Update dealer hand text to not reveal 2nd card
+                    if (dealer_hand.length >= 2) {
+                        dealer_hand_text.innerText = dealer_hand[0] + "\nHidden Card";
+                    } else if (dealer_hand.length === 1) {
+                        dealer_hand_text.innerText = dealer_hand[0];
+                    }
+                } 
+                else {
+                    display_dealer_cards();
+                }
+            }
+            function update_player_chips(player_chips){
+                const container = document.getElementById("player_chip_container");
+                container.innerHTML = ""
+                if (player_chips < 50){
+                    const img = document.createElement("img");
+                    img.src="Blackjack-assets/chip-assets/Poker Chips - 20.png";
+                    img.className = "chip_stack";
+                    container.appendChild(img);
+                }
+                else if (player_chips >= 50 && player_chips < 120){
+                    const img = document.createElement("img");
+                    img.src="Blackjack-assets/chip-assets/Poker Chips - 50.png";
+                    img.className = "chip_stack";
+                    container.appendChild(img);
+                }
+                else if (player_chips >= 120 && player_chips < 300){
+                    const img = document.createElement("img");
+                    img.src="Blackjack-assets/chip-assets/Poker Chips - 120.png";
+                    img.className = "chip_stack";
+                    container.appendChild(img);
+                }
+                else if (player_chips >= 300 && player_chips < 420){
+                    const img = document.createElement("img");
+                    img.src="Blackjack-assets/chip-assets/Poker Chips - 300.png";
+                    img.className = "chip_stack";
+                    container.appendChild(img);
+                }
+                else if(player_chips >=420 && player_chips < 700){
+                    const img = document.createElement("img");
+                    img.src="Blackjack-assets/chip-assets/Poker Chips - 300.png";
+                    img.className = "chip_stack";
+                    container.appendChild(img);
+                    update_multi_chips(player_chips, container);
+                }
+                else if (player_chips >= 700 && player_chips < 820){
+                    const img = document.createElement("img");
+                    img.src="Blackjack-assets/chip-assets/Poker Chips - 700.png";
+                    img.className = "chip_stack";
+                    container.appendChild(img);
+                }
+                else if (player_chips >= 820){
+                    const img = document.createElement("img");
+                    img.src="Blackjack-assets/chip-assets/Poker Chips - 700.png";
+                    img.className = "chip_stack";
+                    container.appendChild(img);
+                    update_multi_chips(player_chips, container);
+                }
+            }
+            function update_prize_pool(prize_pool){
+                const container = document.getElementById("prize_pool_container");
+                container.innerHTML = ""
+                if (prize_pool == 0){
+                    container.innerHTML = "";
+                }
+                else if (prize_pool < 50 && prize_pool > 0){
+                    const img = document.createElement("img");
+                    img.src="Blackjack-assets/chip-assets/Poker Chips - 20.png";
+                    img.className = "chip_stack";
+                    container.appendChild(img);
+                }
+                else if (prize_pool >= 50 && prize_pool < 120){
+                    const img = document.createElement("img");
+                    img.src="Blackjack-assets/chip-assets/Poker Chips - 50.png";
+                    img.className = "chip_stack";
+                    container.appendChild(img);
+                }
+                else if (prize_pool >= 120 && prize_pool < 300){
+                    const img = document.createElement("img");
+                    img.src="Blackjack-assets/chip-assets/Poker Chips - 120.png";
+                    img.className = "chip_stack";
+                    container.appendChild(img);
+                }
+                else if (prize_pool >= 300 && prize_pool < 420){
+                    const img = document.createElement("img");
+                    img.src="Blackjack-assets/chip-assets/Poker Chips - 300.png";
+                    img.className = "chip_stack";
+                    container.appendChild(img);
+                }
+                else if(prize_pool >=420 && prize_pool < 700){
+                    const img = document.createElement("img");
+                    img.src="Blackjack-assets/chip-assets/Poker Chips - 300.png";
+                    img.className = "chip_stack";
+                    container.appendChild(img);
+                    update_multi_chips(prize_pool, container);
+                }
+                else if (prize_pool >= 700 && prize_pool < 820){
+                    const img = document.createElement("img");
+                    img.src="Blackjack-assets/chip-assets/Poker Chips - 700.png";
+                    img.className = "chip_stack";
+                    container.appendChild(img);
+                }
+                else if (prize_pool >= 820){
+                    const img = document.createElement("img");
+                    img.src="Blackjack-assets/chip-assets/Poker Chips - 700.png";
+                    img.className = "chip_stack";
+                    container.appendChild(img);
+                    update_multi_chips(prize_pool, container);
+                }
+            }
+            function add_chip_stacks(container, file_name){
+                const img = document.createElement("img");
+                img.src = "Blackjack-assets/chip-assets/" + file_name;
+                img.className = "chip_stack";
+                container.appendChild(img);
+            }
+            function update_multi_chips(player_chips, container){
+                if (player_chips >=420 && player_chips < 600){
+                    add_chip_stacks(container, "Poker Chips - 120.png");
+                }
+                else if (player_chips >=600 && player_chips < 700){
+                    add_chip_stacks(container, "Poker Chips - 300.png");
+                }
+                else if (player_chips >=820 && player_chips < 1000){
+                    add_chip_stacks(container, "Poker Chips - 120.png");
+                }
+                else if (player_chips >=1000 && player_chips < 1400){
+                    add_chip_stacks(container, "Poker Chips - 300.png");
+                }
+                else if (player_chips >=1400 && player_chips < 2000){
+                    add_chip_stacks(container, "Poker Chips - 700.png");
+                }
+                else if (player_chips >=2000){
+                    add_chip_stacks(container, "Poker Chips - 700.png");
+                    add_chip_stacks(container, "Poker Chips - 300.png");
+                    add_chip_stacks(container, "Poker Chips - 300.png");
+                }
+            }
+            function save_player_stats(won){
+                fetch("https://uexoocaysoxxcplbcgly.supabase.co/functions/v1/game_save", {
+                method: "POST",
+                headers: { 
+                "Content-Type": "application/json",
+                "Authorization": "Bearer sb_publishable_fyQczZnLTyEE_fU2CMRjMw_wkrw19cU",
+                "apikey": "sb_publishable_fyQczZnLTyEE_fU2CMRjMw_wkrw19cU"
+            },
+                body: JSON.stringify({
+                user_id: localStorage.getItem("user_id"),
+                current_chips: player.show_chips(),
+                max_chips: player.highest_chips,
+                hands_played: player.games_played,
+                won: won,
+                name: "Functions"
+                })
+            }).then(res => res.json())
+                .then(data => {
+                if (!data.success) console.error("Save failed");
+                });
+            }
+            async function load_player_stats(player) {
+                    const user_id = localStorage.getItem("user_id");
+                    if (!user_id){
+                        console.warn("No user_id in local storage");
+                        return;
+                    }
+                    try{
+                        const res = await fetch(`https://uexoocaysoxxcplbcgly.supabase.co/functions/v1/game_load`,
+                        {method: "POST",
+                        headers: { 
+                            "Content-Type": "application/json",
+                            "Authorization": "Bearer sb_publishable_fyQczZnLTyEE_fU2CMRjMw_wkrw19cU",
+                            "apikey": "sb_publishable_fyQczZnLTyEE_fU2CMRjMw_wkrw19cU"
+                        },
+                        body: JSON.stringify({ name: "Functions", user_id})
+                        });
+                        const data = await res.json();
+                        console.log("Load response:", data);
+
+                        if (data.stats){
+                            const stats = data.stats;
+                            player.set_chips(stats.current_chips || 120);
+                            player.games_played = stats.hands_played || 0;
+                            player.games_won = stats.wins || 0;
+                            player.highest_chips = stats.max_chips || player.chips;
+                        }
+                        else{
+                            console.warn("No stats founds, using defaults")
+                        }
+                    } 
+                    catch(err) {
+                        console.error("Failed to load player stats", err);
+                    }
+            }
+            function end_round(round_won) {
+            player.games_played++;
+            if (round_won) player.games_won++;
+            if (player.show_chips() > (player.highest_chips || 0)) player.highest_chips = player.show_chips();
+            save_player_stats(round_won); 
+            }
+        </script>
+    </head>
+    <body class="background_image">
+        <div class="game_ui">
+            <div id="dealer_hand_container"></div>
+            <p id="dealer_hand"></p>
+            <p id="dealer_hand_value"></p>
+            <input id="bet_button" type="button" value="Bet" onclick="bet_question()" class="button"/>
+            <div id="prize_pool_container"></div>
+            <input id="new_game" type="button" value="Another Round" 
+            style="display: none;" onclick="start_new_round()" class="button" />
+            <p id="prize_pool"></p>
+            <input id="bet_amount" type="number" min="1" max="10000" style="display: none;" />
+            <input id="submit_bet" type="button" value="Submit" style="display: none;" 
+            onclick="bet_chips()" class="button"/>
+            <input id="hit_button" type="button" value="Hit" onclick="hit_card()" 
+            style="display:none;" class="button"/>
+            <input id="stay_button" type="button" value="Stay" onclick="dealer_turn()" 
+            style="display:none;" class="button"/>
+            <br>
+            <div id="player_hand_container"></div>
+            <p id="player_hand"></p>
+            <p id="player_hand_value"></p>
+        </div>
+        <div class="chip_ui">
+            <div id="player_chip_container"></div>
+            <p id="player_chips"></p>
+        </div>
+    </body>
+</html>
